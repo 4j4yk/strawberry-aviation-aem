@@ -12,3 +12,6 @@ jobs:
         node-version: 24
     - run: npm ci
     - run: npm run lint
+    - run: npm run test:contracts
+    - run: npm run gateway:types
+    - run: npm run gateway:check

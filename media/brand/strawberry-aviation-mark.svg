@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Strawberry Aviation</title>
+  <path fill="#10233f" d="M20 16 13 5c7-1 13 3 17 9L32 2l2 12c4-6 10-10 17-9l-7 11z"/>
+  <path fill="#c9364f" d="M32 13c16 0 26 10 24 24-2 12-13 22-24 27C21 59 10 49 8 37 6 23 16 13 32 13z"/>
+  <path fill="#7e2438" d="M32 60c10-5 19-14 22-24-7 7-16 12-27 16z"/>
+  <path fill="#fff" d="M12 40c15-2 29-7 43-17-6 11-17 19-32 24l9 1-8 4z"/>
+</svg>

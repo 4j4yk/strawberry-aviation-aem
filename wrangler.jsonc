@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "strawberry-catalog-gateway",
+  "main": "gateway/src/index.ts",
+  "compatibility_date": "2026-09-10",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "MAGE_OS_ORIGIN": "https://store.ajayk.xyz",
+    "ALLOWED_ORIGINS": "https://strawberry-aviation.ajayk.xyz,https://main--strawberry-aviation-aem--4j4yk.aem.live,https://main--strawberry-aviation-aem--4j4yk.aem.page,http://localhost:3000"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 }
+  }
+}

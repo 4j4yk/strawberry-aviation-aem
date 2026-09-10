@@ -1,30 +1,44 @@
 {
-  "name": "@adobe/aem-boilerplate",
+  "name": "strawberry-aviation-aem",
   "private": true,
-  "version": "1.3.0",
-  "description": "Starter project for Adobe Helix",
+  "version": "0.1.0",
+  "description": "Strawberry Aviation AEM Edge Delivery storefront backed by Mage-OS",
   "scripts": {
     "lint:js": "eslint .",
     "lint:css": "stylelint \"blocks/**/*.css\" \"styles/*.css\"",
     "lint": "npm run lint:js && npm run lint:css",
-    "lint:fix": "npm run lint:js -- --fix && npm run lint:css -- --fix"
+    "lint:fix": "npm run lint:js -- --fix && npm run lint:css -- --fix",
+    "gateway:types": "wrangler types",
+    "gateway:check": "wrangler deploy --dry-run --outdir .wrangler-dist && tsc -p tsconfig.gateway.json",
+    "gateway:dev": "wrangler dev",
+    "test:contracts": "node --test tests/*.test.mjs",
+    "check": "npm run lint && npm run test:contracts && npm run gateway:check"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adobe/aem-boilerplate.git"
+    "url": "git+https://github.com/4j4yk/strawberry-aviation-aem.git"
   },
-  "author": "Adobe",
+  "author": "Ajay Khampariya",
   "license": "Apache License 2.0",
   "bugs": {
-    "url": "https://github.com/adobe/aem-boilerplate/issues"
+    "url": "https://github.com/4j4yk/strawberry-aviation-aem/issues"
   },
-  "homepage": "https://github.com/adobe/aem-boilerplate#readme",
+  "homepage": "https://github.com/4j4yk/strawberry-aviation-aem#readme",
   "devDependencies": {
     "@babel/eslint-parser": "7.29.7",
+    "@cloudflare/workers-types": "^5.20260910.1",
+    "@types/node": "^22.20.2",
     "eslint": "8.57.1",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.32.0",
     "stylelint": "17.15.0",
-    "stylelint-config-standard": "40.0.0"
+    "stylelint-config-standard": "40.0.0",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.130.0"
+  },
+  "dependencies": {
+    "animejs": "^4.1.3",
+    "graphql": "^16.11.0",
+    "graphql-yoga": "^5.16.2"
   }
 }

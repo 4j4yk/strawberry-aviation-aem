@@ -1,0 +1,80 @@
+.aviation-catalog {
+  --catalog-border: #cbd3df;
+
+  border-top: 4px solid var(--accent-color);
+  padding-top: 1.5rem;
+}
+
+.aviation-catalog .aviation-catalog-kicker,
+.aviation-catalog .aviation-catalog-sku {
+  margin: 0 0 0.4rem;
+  color: var(--accent-strong);
+  font-size: var(--body-font-size-xs);
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.aviation-catalog .aviation-catalog-intro h2 { margin-top: 0; }
+
+.aviation-catalog .aviation-catalog-status {
+  border-left: 4px solid var(--signal-color);
+  padding: 0.75rem 1rem;
+  background: var(--surface-muted);
+}
+
+.aviation-catalog[data-commerce-state="live"] .aviation-catalog-status {
+  border-color: var(--success-color);
+}
+
+.aviation-catalog .aviation-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aviation-catalog .aviation-catalog-card {
+  border: 1px solid var(--catalog-border);
+  border-radius: var(--radius-m);
+  padding: 1.25rem;
+  background: var(--surface-color);
+  box-shadow: var(--shadow-s);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.aviation-catalog .aviation-catalog-card:hover,
+.aviation-catalog .aviation-catalog-card:focus-within {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-m);
+}
+
+.aviation-catalog .aviation-catalog-card h3 {
+  margin: 0.35rem 0 0.75rem;
+}
+
+.aviation-catalog .aviation-catalog-details {
+  color: var(--muted-color);
+}
+
+.aviation-catalog .aviation-catalog-action {
+  font-weight: 700;
+}
+
+.aviation-catalog [aria-disabled="true"] {
+  color: var(--muted-color);
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviation-catalog .aviation-catalog-card {
+    transition: none;
+  }
+
+  .aviation-catalog .aviation-catalog-card:hover,
+  .aviation-catalog .aviation-catalog-card:focus-within {
+    transform: none;
+  }
+}

@@ -5,4 +5,9 @@ LICENSE
 package.json
 package-lock.json
 test/*
+gateway/*
+worker-configuration.d.ts
+wrangler.jsonc
+tsconfig.gateway.json
+scripts/vendor/*LICENSE.md
 sync-block-collection.sh

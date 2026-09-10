@@ -1,0 +1,65 @@
+.commerce-architecture-flow {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: var(--radius-l);
+  background: var(--surface-muted);
+}
+
+.commerce-architecture-stages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1.5rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.commerce-architecture-stages li {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  border-top: 4px solid var(--success-color);
+  padding: 1rem;
+  background: white;
+  box-shadow: var(--shadow-s);
+}
+
+.commerce-architecture-stages li:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: -1.15rem;
+  color: var(--accent-color);
+  content: '→';
+  font-weight: 900;
+}
+
+.commerce-architecture-stages span {
+  color: var(--muted-color);
+  font-size: var(--body-font-size-xs);
+}
+
+.commerce-architecture-stages small {
+  color: var(--success-strong);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.commerce-architecture-flow[data-path="fallback"] li[data-state="live"] {
+  opacity: 0.38;
+}
+
+.commerce-architecture-flow[data-path="fallback"] li[data-state="fallback"] {
+  border-color: var(--signal-strong);
+  box-shadow: 0 0 0 3px rgb(244 183 64 / 30%);
+}
+
+@media (width < 700px) {
+  .commerce-architecture-stages li::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .commerce-architecture-flow * {
+    transition: none;
+  }
+}

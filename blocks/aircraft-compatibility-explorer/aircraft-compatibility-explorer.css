@@ -1,0 +1,48 @@
+.aircraft-compatibility-explorer {
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-radius: var(--radius-l);
+  color: white;
+  background: linear-gradient(135deg, var(--ink-color), #1c365e);
+  overflow: hidden;
+}
+
+.aircraft-compatibility-explorer h2 {
+  margin-top: 0;
+  color: white;
+}
+
+.aircraft-compatibility-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1.5rem 0;
+}
+
+.aircraft-compatibility-option {
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  color: white;
+  background: transparent;
+  cursor: pointer;
+}
+
+.aircraft-compatibility-option[aria-pressed="true"] {
+  border-color: var(--signal-color);
+  color: var(--ink-color);
+  background: var(--signal-color);
+}
+
+.aircraft-compatibility-panel {
+  display: grid;
+  gap: 0.25rem;
+  border-left: 4px solid var(--accent-color);
+  padding: 0.75rem 1rem;
+  background: rgb(255 255 255 / 8%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aircraft-compatibility-explorer * {
+    scroll-behavior: auto;
+  }
+}

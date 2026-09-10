@@ -2,6 +2,9 @@
 coverage/*
 logs/*
 node_modules/*
+.wrangler/
+.wrangler-dist/
+.dev.vars*
 
 helix-importer-ui
 .DS_Store
