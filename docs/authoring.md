@@ -22,8 +22,8 @@ Mage-OS source.
 | aircraft-compatibility-explorer |  |  |
 | --- | --- | --- |
 | Hydraulics | SAR-90-200 | Pumps, actuators, seals and service kits |
-| Landing gear | SAR-90-200 | Brake, wheel and indication assemblies |
-| Avionics | SA-320N | Flight-control and communication units |
+| Landing gear | SAR-90-100 | Brake, wheel and indication assemblies |
+| Avionics | SVJ-40B | Flight-control and communication units |
 
 The variant column is sent to the catalog block; the system label remains the user-facing control.
 
