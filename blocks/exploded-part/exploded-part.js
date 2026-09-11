@@ -16,34 +16,26 @@ export default function decorate(block) {
   const stage = document.createElement('div');
   stage.className = 'exploded-part-stage';
   stage.setAttribute('aria-label', 'Interactive exploded view of the fictional NavCore communication unit');
-  ['housing', 'processor', 'connector'].forEach((part) => {
-    const image = document.createElement('img');
-    image.className = `exploded-part-layer exploded-part-layer-${part}`;
-    image.src = productImage;
-    image.alt = '';
-    image.loading = 'lazy';
-    image.decoding = 'async';
-    image.setAttribute('aria-hidden', 'true');
-    stage.append(image);
-  });
-  const accessibleImage = document.createElement('img');
-  accessibleImage.className = 'exploded-part-accessible-image';
-  accessibleImage.src = productImage;
-  accessibleImage.alt = originalImage?.alt || 'Fictional NavCore communication unit in an exploded assembly view';
-  accessibleImage.loading = 'lazy';
-  accessibleImage.decoding = 'async';
-  stage.append(accessibleImage);
+  const image = document.createElement('img');
+  image.className = 'exploded-part-product-image';
+  image.src = productImage;
+  image.alt = originalImage?.alt || 'Fictional NavCore communication unit in an exploded assembly view';
+  image.loading = 'lazy';
+  image.decoding = 'async';
+  stage.append(image);
   const controls = document.createElement('div');
   controls.className = 'exploded-part-controls';
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'exploded-part-toggle';
-  toggle.setAttribute('aria-pressed', 'false');
-  toggle.textContent = 'Explode assembly';
-  toggle.addEventListener('click', () => {
-    const exploded = stage.classList.toggle('is-exploded');
-    toggle.setAttribute('aria-pressed', String(exploded));
-    toggle.textContent = exploded ? 'Assemble unit' : 'Explode assembly';
+  toggle.textContent = 'Replay exploded view';
+  toggle.addEventListener('click', async () => {
+    const motion = await loadMotion();
+    if (motion) {
+      motion.animate(image, {
+        opacity: [0.35, 1], scale: [0.94, 1], rotate: [-1.2, 0], duration: 650,
+      });
+    }
   });
   controls.append(toggle);
   figure.append(stage, controls);
