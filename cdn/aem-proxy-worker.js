@@ -1,4 +1,5 @@
 const ORIGIN_HOSTNAME = 'main--strawberry-aviation-aem--4j4yk.aem.live';
+const CACHE_VERSION = 'aem-experience-reset-2026-09-15';
 
 function extension(pathname) {
   const basename = pathname.split('/').pop();
@@ -31,6 +32,8 @@ export default {
     }
     url.searchParams.sort();
     url.hostname = ORIGIN_HOSTNAME;
+    const cacheUrl = new URL(url);
+    cacheUrl.searchParams.set('__release', CACHE_VERSION);
 
     const originRequest = new Request(url, request);
     originRequest.headers.set('x-forwarded-host', 'aviation.ajayk.xyz');
@@ -39,7 +42,7 @@ export default {
 
     let response = await fetch(originRequest, {
       method: request.method,
-      cf: { cacheEverything: true },
+      cf: { cacheEverything: true, cacheKey: cacheUrl.href },
     });
     response = new Response(response.body, response);
     if (response.status === 301 && savedSearch) {
