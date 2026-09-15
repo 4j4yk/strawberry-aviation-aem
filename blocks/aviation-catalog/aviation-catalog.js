@@ -66,16 +66,30 @@ function normalize(item, storefront, source = 'snapshot') {
     sku,
     name,
     price: String(item.formatted_price || item.price || '').trim(),
-    availability: String(item.availability || '').trim(),
+    availability: String(item.availability || '').trim().replaceAll('_', ' ').toLowerCase(),
     url: safeProductUrl(item.url, storefront, sku),
     source,
     snapshot: String(item.snapshot || '').trim(),
   };
 }
 
+function productMonogram(name) {
+  const words = name.split(/\s+/).filter(Boolean);
+  return words.slice(0, 2).map((word) => word[0]).join('').toUpperCase() || 'SA';
+}
+
 function createCard(product) {
   const item = document.createElement('li');
   item.className = 'aviation-catalog-card';
+  const article = document.createElement('article');
+  const media = document.createElement('div');
+  media.className = 'aviation-catalog-media';
+  media.setAttribute('aria-hidden', 'true');
+  const monogram = document.createElement('span');
+  monogram.textContent = productMonogram(product.name);
+  media.append(monogram);
+  const content = document.createElement('div');
+  content.className = 'aviation-catalog-content';
   const meta = document.createElement('p');
   meta.className = 'aviation-catalog-sku';
   meta.textContent = product.sku;
@@ -86,13 +100,19 @@ function createCard(product) {
   heading.append(link);
   const details = document.createElement('p');
   details.className = 'aviation-catalog-details';
-  details.textContent = [product.price, product.availability].filter(Boolean).join(' · ')
-    || 'See current details in Mage-OS';
+  const price = document.createElement('span');
+  price.className = 'aviation-catalog-price';
+  price.textContent = product.price || 'Request price';
+  const availability = document.createElement('span');
+  availability.textContent = product.availability || 'Check availability';
+  details.append(price, availability);
   const action = document.createElement('a');
   action.className = 'aviation-catalog-action';
   action.href = product.url;
-  action.textContent = product.source === 'live' ? 'View live product' : 'Open reference store';
-  item.append(meta, heading, details, action);
+  action.textContent = product.source === 'live' ? 'View part details' : 'Reference details';
+  content.append(meta, heading, details, action);
+  article.append(media, content);
+  item.append(article);
   return item;
 }
 
@@ -113,7 +133,7 @@ async function fetchCatalog(config) {
       headers: { accept: 'application/json', 'content-type': 'application/json' },
       body: JSON.stringify({
         query: 'query AviationCatalog($variant: String!, $first: Int!) { products(variant: $variant, first: $first) { items { sku name formattedPrice availability url } source dataTimestamp totalCount } }',
-        variables: { variant: config.variant, first: 24 },
+        variables: { variant: config.variant, first: 12 },
       }),
       signal: controller.signal,
     });
@@ -125,7 +145,6 @@ async function fetchCatalog(config) {
       products: result.items.map((item) => normalize({
         ...item,
         formatted_price: item.formattedPrice,
-        availability: item.availability === 'IN_STOCK' ? 'in_stock' : 'out_of_stock',
       }, config.storefront, result.source === 'LIVE_MAGE_OS' ? 'live' : 'snapshot')).filter(Boolean),
       source: result.source,
       timestamp: result.dataTimestamp,
@@ -137,10 +156,14 @@ async function fetchCatalog(config) {
 
 function announce(block, state, message) {
   block.dataset.commerceState = state;
-  block.querySelector('.aviation-catalog-status').textContent = message;
-  document.dispatchEvent(new CustomEvent('strawberry:catalog-state', {
-    detail: { state, message },
-  }));
+  const status = block.querySelector('.aviation-catalog-status');
+  if (status) status.textContent = message;
+  document.dispatchEvent(new CustomEvent('strawberry:catalog-state', { detail: { state, message } }));
+}
+
+function displayDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.valueOf()) ? '' : date.toLocaleDateString();
 }
 
 export default async function decorate(block) {
@@ -148,11 +171,12 @@ export default async function decorate(block) {
   const fallbackProducts = fallback
     .map((item) => normalize(item, config.storefront))
     .filter(Boolean);
+  const header = document.createElement('div');
+  header.className = 'aviation-catalog-header';
   const intro = document.createElement('div');
-  intro.className = 'aviation-catalog-intro';
   const kicker = document.createElement('p');
   kicker.className = 'aviation-catalog-kicker';
-  kicker.textContent = 'Aircraft-ready inventory';
+  kicker.textContent = 'Featured inventory';
   const heading = document.createElement('h2');
   heading.textContent = `Parts for ${config.variant}`;
   intro.append(kicker, heading);
@@ -160,33 +184,36 @@ export default async function decorate(block) {
   status.className = 'aviation-catalog-status';
   status.setAttribute('role', 'status');
   status.setAttribute('aria-live', 'polite');
-  status.textContent = 'Checking live Mage-OS availability…';
+  status.textContent = 'Checking availability…';
+  header.append(intro, status);
   const cards = document.createElement('ul');
   cards.className = 'aviation-catalog-grid';
   fallbackProducts.forEach((product) => cards.append(createCard(product)));
-  block.replaceChildren(intro, status, cards);
+  block.replaceChildren(header, cards);
   block.dataset.variant = config.variant;
 
   async function refresh() {
-    announce(block, 'loading', `Checking live Mage-OS parts for ${config.variant}…`);
+    announce(block, 'loading', 'Checking availability…');
     try {
       const result = await fetchCatalog(config);
-      const { products } = result;
-      if (!products.length) throw new Error('No products were returned');
-      cards.replaceChildren(...products.map(createCard));
+      if (!result.products.length) throw new Error('No products were returned');
+      cards.replaceChildren(...result.products.map(createCard));
       if (result.source === 'LIVE_MAGE_OS') {
-        announce(block, 'live', `${products.length} live ${products.length === 1 ? 'part' : 'parts'} from Mage-OS.`);
+        announce(block, 'live', `Live inventory · ${result.products.length} ${result.products.length === 1 ? 'part' : 'parts'}`);
       } else {
-        const date = new Date(result.timestamp).toLocaleDateString();
         disableActions(cards);
-        announce(block, 'snapshot', `Mage-OS is unavailable. Showing a read-only catalog snapshot dated ${date}.`);
+        const date = displayDate(result.timestamp);
+        announce(block, 'snapshot', date ? `Reference catalog · ${date}` : 'Reference catalog');
       }
     } catch {
       cards.replaceChildren(...fallbackProducts.map(createCard));
-      const date = fallbackProducts.find((product) => product.snapshot)?.snapshot;
-      const suffix = date ? ` Snapshot dated ${date}.` : '';
-      announce(block, 'snapshot', `Live commerce is unavailable. Showing read-only reference data.${suffix}`);
       disableActions(cards);
+      const date = fallbackProducts.map((product) => displayDate(product.snapshot)).find(Boolean);
+      if (fallbackProducts.length) {
+        announce(block, 'snapshot', date ? `Reference catalog · ${date}` : 'Reference catalog');
+      } else {
+        announce(block, 'unavailable', 'Inventory is temporarily unavailable');
+      }
     }
   }
 

@@ -31,7 +31,10 @@ export default function decorate(block) {
     toggle.textContent = outage ? 'Show live path' : 'Show outage path';
     block.dataset.path = outage ? 'fallback' : 'live';
   });
-  block.replaceChildren(list, toggle);
+  const note = document.createElement('span');
+  note.className = 'commerce-architecture-note';
+  note.textContent = 'Switch paths to inspect graceful catalog degradation.';
+  block.replaceChildren(list, toggle, note);
   whenVisible(block, async () => {
     const motion = await loadMotion();
     if (motion) {

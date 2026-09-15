@@ -1,13 +1,18 @@
 .aviation-catalog {
-  --catalog-border: #cbd3df;
+  --catalog-border: #d8dee7;
+}
 
-  border-top: 4px solid var(--accent-color);
-  padding-top: 1.5rem;
+.aviation-catalog .aviation-catalog-header {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .aviation-catalog .aviation-catalog-kicker,
 .aviation-catalog .aviation-catalog-sku {
-  margin: 0 0 0.4rem;
+  margin: 0;
   color: var(--accent-strong);
   font-size: var(--body-font-size-xs);
   font-weight: 750;
@@ -15,66 +20,113 @@
   text-transform: uppercase;
 }
 
-.aviation-catalog .aviation-catalog-intro h2 { margin-top: 0; }
-
-.aviation-catalog .aviation-catalog-status {
-  border-left: 4px solid var(--signal-color);
-  padding: 0.75rem 1rem;
-  background: var(--surface-muted);
+.aviation-catalog .aviation-catalog-header h2 {
+  margin: 0.2rem 0 0;
 }
 
-.aviation-catalog[data-commerce-state="live"] .aviation-catalog-status {
-  border-color: var(--success-color);
+.aviation-catalog .aviation-catalog-status {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+  color: var(--muted-color);
+  font-size: var(--body-font-size-xs);
+}
+
+.aviation-catalog .aviation-catalog-status::before {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--signal-color);
+  content: '';
+}
+
+.aviation-catalog[data-commerce-state="live"] .aviation-catalog-status::before {
+  background: var(--success-color);
 }
 
 .aviation-catalog .aviation-catalog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
   gap: 1rem;
-  margin: 1.5rem 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .aviation-catalog .aviation-catalog-card {
+  overflow: hidden;
   border: 1px solid var(--catalog-border);
   border-radius: var(--radius-m);
-  padding: 1.25rem;
   background: var(--surface-color);
-  box-shadow: var(--shadow-s);
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .aviation-catalog .aviation-catalog-card:hover,
 .aviation-catalog .aviation-catalog-card:focus-within {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-m);
+  border-color: #aeb9c8;
+  box-shadow: var(--shadow-s);
 }
 
+.aviation-catalog .aviation-catalog-media {
+  display: grid;
+  min-height: 8rem;
+  padding: 1rem;
+  place-items: center;
+  color: var(--ink-color);
+  background: linear-gradient(145deg, #f7f9fb, #e9eef3);
+}
+
+.aviation-catalog .aviation-catalog-media span {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  border: 1px solid #cbd4df;
+  border-radius: 50%;
+  place-items: center;
+  background: white;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.aviation-catalog .aviation-catalog-content { padding: 1rem; }
+
 .aviation-catalog .aviation-catalog-card h3 {
-  margin: 0.35rem 0 0.75rem;
+  margin: 0.3rem 0 0.75rem;
+  font-size: var(--heading-font-size-s);
 }
 
 .aviation-catalog .aviation-catalog-details {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  min-height: 1.6rem;
+  margin-bottom: 1rem;
   color: var(--muted-color);
+  font-size: var(--body-font-size-xs);
 }
 
-.aviation-catalog .aviation-catalog-action {
-  font-weight: 700;
+.aviation-catalog .aviation-catalog-price {
+  color: var(--ink-color);
+  font-weight: 750;
 }
+
+.aviation-catalog .aviation-catalog-action { font-weight: 750; }
 
 .aviation-catalog [aria-disabled="true"] {
   color: var(--muted-color);
   cursor: not-allowed;
+  text-decoration: none;
+}
+
+@media (width < 700px) {
+  .aviation-catalog .aviation-catalog-header {
+    display: grid;
+    align-items: start;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aviation-catalog .aviation-catalog-card {
-    transition: none;
-  }
-
-  .aviation-catalog .aviation-catalog-card:hover,
-  .aviation-catalog .aviation-catalog-card:focus-within {
-    transform: none;
-  }
+  .aviation-catalog .aviation-catalog-card { transition: none; }
 }

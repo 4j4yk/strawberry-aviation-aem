@@ -19,15 +19,13 @@ export default function decorate(block) {
     heading.textContent = step.title;
     const detail = document.createElement('p');
     detail.textContent = step.detail;
-    const status = document.createElement('small');
-    status.textContent = step.status || 'implemented';
-    content.append(heading, detail, status);
+    content.append(heading, detail);
     item.append(marker, content);
     list.append(item);
   });
   const note = document.createElement('p');
   note.className = 'aog-response-note';
-  note.textContent = 'Fictional demonstration workflow. Simulated steps are explicitly labelled.';
+  note.textContent = 'Demonstration workflow using fictional data; some operational handoffs are simulated.';
   block.replaceChildren(list, note);
   whenVisible(block, async () => {
     const motion = await loadMotion();

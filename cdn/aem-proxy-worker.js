@@ -7,7 +7,13 @@ function extension(pathname) {
 }
 
 function isMedia(url) {
-  return /\/media_[0-9a-f]{40,}[\/a-zA-Z0-9_-]*\.[0-9a-z]+$/.test(url.pathname);
+  return /\/media_[0-9a-f]{40,}[/a-zA-Z0-9_-]*\.[0-9a-z]+$/.test(url.pathname);
+}
+
+function retainSearchParameters(url, allowed) {
+  [...url.searchParams.keys()]
+    .filter((key) => !allowed.includes(key))
+    .forEach((key) => url.searchParams.delete(key));
 }
 
 export default {
@@ -17,13 +23,9 @@ export default {
 
     const savedSearch = url.search;
     if (isMedia(url)) {
-      for (const [key] of url.searchParams) {
-        if (!['format', 'height', 'optimize', 'width'].includes(key)) url.searchParams.delete(key);
-      }
+      retainSearchParameters(url, ['format', 'height', 'optimize', 'width']);
     } else if (extension(url.pathname) === 'json') {
-      for (const [key] of url.searchParams) {
-        if (!['limit', 'offset', 'sheet'].includes(key)) url.searchParams.delete(key);
-      }
+      retainSearchParameters(url, ['limit', 'offset', 'sheet']);
     } else {
       url.search = '';
     }

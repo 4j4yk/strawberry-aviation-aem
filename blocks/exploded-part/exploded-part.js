@@ -11,24 +11,24 @@ export default function decorate(block) {
   })).filter(({ name }) => name);
   const figure = document.createElement('figure');
   figure.className = 'exploded-part-figure';
-  const originalImage = mediaRow?.querySelector('img');
-  const productImage = '/media/products/navcore-communication-unit-exploded.webp';
+  const originalPicture = mediaRow?.querySelector('picture');
   const stage = document.createElement('div');
   stage.className = 'exploded-part-stage';
   stage.setAttribute('aria-label', 'Interactive exploded view of the fictional NavCore communication unit');
-  const image = document.createElement('img');
+  const picture = originalPicture?.cloneNode(true);
+  const image = picture?.querySelector('img') || document.createElement('img');
   image.className = 'exploded-part-product-image';
-  image.src = productImage;
-  image.alt = originalImage?.alt || 'Fictional NavCore communication unit in an exploded assembly view';
+  if (!picture) image.src = '/media/products/navcore-communication-unit-exploded.webp';
+  image.alt = image.alt || 'Fictional NavCore communication unit in an exploded assembly view';
   image.loading = 'lazy';
   image.decoding = 'async';
-  stage.append(image);
+  stage.append(picture || image);
   const controls = document.createElement('div');
   controls.className = 'exploded-part-controls';
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'exploded-part-toggle';
-  toggle.textContent = 'Replay exploded view';
+  toggle.textContent = 'Replay assembly view';
   toggle.addEventListener('click', async () => {
     const motion = await loadMotion();
     if (motion) {
@@ -52,9 +52,11 @@ export default function decorate(block) {
     marker.textContent = index + 1;
     button.append(marker, part.name);
     const detail = document.createElement('p');
+    detail.id = `${block.id || 'exploded-part'}-detail-${index + 1}`;
     detail.textContent = part.detail;
     item.append(button, detail);
     button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', detail.id);
     button.addEventListener('click', () => {
       const expanded = button.getAttribute('aria-expanded') === 'true';
       list.querySelectorAll('button').forEach((entry) => entry.setAttribute('aria-expanded', 'false'));
@@ -62,7 +64,7 @@ export default function decorate(block) {
     });
     list.append(item);
   });
-  block.replaceChildren(figure, list);
+  block.replaceChildren(figure, ...(parts.length ? [list] : []));
   whenVisible(block, async () => {
     const motion = await loadMotion();
     if (motion) {

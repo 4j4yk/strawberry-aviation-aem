@@ -1,48 +1,58 @@
 .aircraft-compatibility-explorer {
-  padding: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-l);
-  color: white;
-  background: linear-gradient(135deg, var(--ink-color), #1c365e);
-  overflow: hidden;
+  background: var(--surface-color);
 }
 
-.aircraft-compatibility-explorer h2 {
-  margin-top: 0;
-  color: white;
+.aircraft-compatibility-explorer h2 { margin: 0; }
+
+.aircraft-compatibility-explorer > p {
+  max-width: 42rem;
+  margin-top: 0.5rem;
+  color: var(--muted-color);
 }
 
 .aircraft-compatibility-controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin: 1.5rem 0;
+  gap: 0.5rem;
+  margin: 1.25rem 0 1rem;
+  padding-bottom: 0.25rem;
+  overflow-x: auto;
 }
 
 .aircraft-compatibility-option {
-  border: 1px solid rgb(255 255 255 / 45%);
+  flex: 0 0 auto;
+  min-height: 2.75rem;
+  border: 1px solid var(--border-color);
   border-radius: 999px;
-  padding: 0.7rem 1rem;
-  color: white;
-  background: transparent;
+  padding: 0.55rem 1rem;
+  color: var(--ink-color);
+  background: var(--surface-color);
+  font-weight: 700;
   cursor: pointer;
 }
 
+.aircraft-compatibility-option:hover { border-color: var(--accent-color); }
+
 .aircraft-compatibility-option[aria-pressed="true"] {
-  border-color: var(--signal-color);
-  color: var(--ink-color);
-  background: var(--signal-color);
+  border-color: var(--ink-color);
+  color: white;
+  background: var(--ink-color);
 }
 
 .aircraft-compatibility-panel {
   display: grid;
-  gap: 0.25rem;
-  border-left: 4px solid var(--accent-color);
-  padding: 0.75rem 1rem;
-  background: rgb(255 255 255 / 8%);
+  grid-template-columns: minmax(8rem, auto) 1fr;
+  gap: 0.35rem 1rem;
+  align-items: baseline;
+  border-radius: var(--radius-m);
+  padding: 0.9rem 1rem;
+  background: var(--surface-muted);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .aircraft-compatibility-explorer * {
-    scroll-behavior: auto;
-  }
+.aircraft-compatibility-panel span { color: var(--muted-color); }
+
+@media (width < 600px) {
+  .aircraft-compatibility-panel { grid-template-columns: 1fr; }
 }

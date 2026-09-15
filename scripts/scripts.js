@@ -104,6 +104,41 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * Adds stable page landmarks without coupling blocks to their authored position.
+ * @param {HTMLElement} main The main element
+ */
+function decoratePageLandmarks(main) {
+  const landmarkBlocks = {
+    'aircraft-compatibility-explorer': 'products',
+    'exploded-part': 'assembly',
+    'aog-response-timeline': 'aog-support',
+    'commerce-architecture-flow': 'architecture',
+  };
+
+  Object.entries(landmarkBlocks).forEach(([blockName, id]) => {
+    const section = main.querySelector(`.${blockName}`)?.closest('.section');
+    if (section) section.id = id;
+  });
+
+  const hero = main.querySelector(':scope > .section:first-of-type');
+  hero?.classList.add('site-hero');
+  const heroLinks = hero?.querySelectorAll('a[href]') || [];
+  heroLinks.forEach((link, index) => link.classList.add('button', index === 0 ? 'primary' : 'secondary'));
+  const actionRow = heroLinks[0]?.closest('p');
+  if (actionRow) {
+    actionRow.classList.add('site-hero-actions');
+    [...actionRow.childNodes]
+      .filter((node) => node.nodeType === Node.TEXT_NODE && /^[\s\u00b7|]+$/.test(node.textContent))
+      .forEach((node) => node.remove());
+  }
+
+  const boundarySection = [...main.querySelectorAll(':scope > .section')].find((section) => (
+    section.querySelector('h2')?.textContent.trim().toLowerCase() === 'demonstration boundaries'
+  ));
+  if (boundarySection) boundarySection.id = 'about';
+}
+
+/**
  * Decorates formatted links to style them as buttons.
  * @param {HTMLElement} main The main container element
  */
@@ -153,6 +188,7 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
+  decoratePageLandmarks(main);
 }
 
 /**
