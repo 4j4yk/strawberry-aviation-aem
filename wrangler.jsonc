@@ -6,7 +6,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "MAGE_OS_ORIGIN": "https://store.ajayk.xyz",
-    "ALLOWED_ORIGINS": "https://strawberry-aviation.ajayk.xyz,https://main--strawberry-aviation-aem--4j4yk.aem.live,https://main--strawberry-aviation-aem--4j4yk.aem.page,http://localhost:3000"
+    "ALLOWED_ORIGINS": "https://aviation.ajayk.xyz,https://main--strawberry-aviation-aem--4j4yk.aem.live,https://main--strawberry-aviation-aem--4j4yk.aem.page,http://localhost:3000"
   },
   "observability": {
     "enabled": true,

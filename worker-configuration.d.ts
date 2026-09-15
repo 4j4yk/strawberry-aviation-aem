@@ -3,7 +3,7 @@
 // Runtime types generated with workerd@1.20260910.1 2026-09-10 nodejs_compat
 interface __BaseEnv_Env {
 	MAGE_OS_ORIGIN: "https://store.ajayk.xyz";
-	ALLOWED_ORIGINS: "https://strawberry-aviation.ajayk.xyz,https://main--strawberry-aviation-aem--4j4yk.aem.live,https://main--strawberry-aviation-aem--4j4yk.aem.page,http://localhost:3000";
+	ALLOWED_ORIGINS: "https://aviation.ajayk.xyz,https://main--strawberry-aviation-aem--4j4yk.aem.live,https://main--strawberry-aviation-aem--4j4yk.aem.page,http://localhost:3000";
 }
 declare namespace Cloudflare {
 	interface GlobalProps {

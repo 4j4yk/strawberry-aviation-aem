@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "strawberry-aviation-aem-cdn",
+  "main": "cdn/aem-proxy-worker.js",
+  "compatibility_date": "2026-09-10",
+  "routes": [
+    { "pattern": "aviation.ajayk.xyz/*", "zone_name": "ajayk.xyz" }
+  ]
+}

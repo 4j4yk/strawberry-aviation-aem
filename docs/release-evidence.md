@@ -19,7 +19,17 @@ Evidence captured on 2026-09-10 for commit `6b0685b` and the independently autho
 
 ## Published services
 
-- AEM live: <https://main--strawberry-aviation-aem--4j4yk.aem.live/>
+- Production domain: <https://aviation.ajayk.xyz/>
+- AEM live origin: <https://main--strawberry-aviation-aem--4j4yk.aem.live/>
+
+## Custom domain
+
+- Cloudflare proxied CNAME: `aviation.ajayk.xyz` -> `main--strawberry-aviation-aem--4j4yk.aem.live`
+- Dedicated Worker: `strawberry-aviation-aem-cdn`
+- Worker route: `aviation.ajayk.xyz/*`
+- The Worker forwards `X-Forwarded-Host`, enables AEM push invalidation, preserves approved media/JSON query parameters, and removes the upstream `Age` header.
+- The automotive `aem-demo.ajayk.xyz` domain and its Worker were not changed.
+- Verified 2026-09-15: the production domain rendered `Strawberry Aviation Supply | Composable AEM and Mage-OS Demo` and exposed the expected Mage-OS links.
 - AEM preview: <https://main--strawberry-aviation-aem--4j4yk.aem.page/>
 - GraphQL gateway: <https://strawberry-catalog-gateway.ajaykhampariya14.workers.dev/graphql>
 - Transactional Mage-OS reference: <https://store.ajayk.xyz/>
