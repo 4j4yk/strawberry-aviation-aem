@@ -4,10 +4,12 @@
  * https://www.aem.live/developer/block-collection/fragment
  */
 
-// eslint-disable-next-line import/no-cycle
+// Versioned URL must match head.html so the browser evaluates this cyclic module only once.
+/* eslint-disable import/no-cycle, import/no-unresolved */
 import {
   decorateMain,
-} from '../../scripts/scripts.js';
+} from '../../scripts/scripts.js?v=20260916-1';
+/* eslint-enable import/no-cycle, import/no-unresolved */
 
 import {
   loadSections,
