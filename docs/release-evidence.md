@@ -1,5 +1,15 @@
 # Release evidence
 
+## 2026-09-16 experience reset
+
+- Repository head: `e260602` (`main`).
+- AEM preview: rebuilt shell, all five landmarks, all blocks and footer browser-verified without console errors.
+- Production origin: versioned `scripts.js` and `styles.css` confirmed over HTTP.
+- Production CDN Worker: version `ace5c05b-1350-4545-aa8e-9e1a6f0416d4` deployed on `aviation.ajayk.xyz/*` with a versioned origin cache key.
+- Quality gates: ESLint, Stylelint, 10 contract/documentation tests, JavaScript syntax and `git diff --check` passed.
+- Current catalog state: dated read-only snapshot because the live Mage-OS catalog request was unavailable during verification; transactional links are disabled.
+- Open evidence gate: a fresh production-browser performance/accessibility trace and final product imagery.
+
 Evidence captured on 2026-09-10 for commit `6b0685b` and the independently authored DA content source.
 
 | Gate | Result |

@@ -6,11 +6,11 @@ the new contracts. The automotive `aem-demo` repository and domain remain outsid
 | Phase | Outcome | Gate | Status |
 | --- | --- | --- | --- |
 | 0 | Scope, site map, content model, design system, block contracts, and acceptance criteria | Documents agree on routes, claims, ownership, and status vocabulary | Complete in repository; live content not implied |
-| 1 | Reliable global shell and simple homepage | Header/footer survive fragment failure; responsive navigation and core homepage sections work | In implementation |
-| 2 | Focused Products and AOG sections | Product model, imagery, compatibility, live/snapshot behavior, and AOG human boundary pass | Planned |
-| 3 | Focused architecture and About sections | Technical evidence is contained; fictional and implementation boundaries are explicit | Planned |
-| 4 | Refactor and authoring hardening | Shared utilities, defensive block parsing, authoring examples, and no page-specific copy in code | Planned |
-| 5 | Production-quality evidence | Source checks, browser smoke, accessibility, visual/responsive, performance, CORS, and outage tests pass | Planned |
+| 1 | Reliable global shell and simple homepage | Header/footer survive fragment failure; responsive navigation and core homepage sections work | Complete; preview browser verified and production CDN refreshed |
+| 2 | Focused Products and AOG sections | Product model, imagery, compatibility, live/snapshot behavior, and AOG human boundary pass | Implemented; final product imagery remains a content gate |
+| 3 | Focused architecture and About sections | Technical evidence is contained; fictional and implementation boundaries are explicit | Complete in code and current authored homepage |
+| 4 | Refactor and authoring hardening | Shared utilities, defensive block parsing, authoring examples, and no page-specific copy in code | Partial; block contracts and defensive parsing complete |
+| 5 | Production-quality evidence | Source checks, browser smoke, accessibility, visual/responsive, performance, CORS, and outage tests pass | Partial; lint, contracts, preview browser and production HTTP verified; performance trace pending |
 
 ## Delivery principles
 
