@@ -23,7 +23,8 @@ export default {
     if (url.pathname.startsWith('/drafts/')) return new Response('Not Found', { status: 404 });
 
     const savedSearch = url.search;
-    if (isMedia(url)) {
+    const mediaRequest = isMedia(url);
+    if (mediaRequest) {
       retainSearchParameters(url, ['format', 'height', 'optimize', 'width']);
     } else if (extension(url.pathname) === 'json') {
       retainSearchParameters(url, ['limit', 'offset', 'sheet']);
@@ -32,8 +33,8 @@ export default {
     }
     url.searchParams.sort();
     url.hostname = ORIGIN_HOSTNAME;
+    if (!mediaRequest) url.searchParams.set('__release', CACHE_VERSION);
     const cacheUrl = new URL(url);
-    cacheUrl.searchParams.set('__release', CACHE_VERSION);
 
     const originRequest = new Request(url, request);
     originRequest.headers.set('x-forwarded-host', 'aviation.ajayk.xyz');
