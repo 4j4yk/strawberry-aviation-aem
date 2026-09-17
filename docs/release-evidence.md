@@ -14,7 +14,8 @@
 - Contract tests: 12 passed; JavaScript and CSS lint passed.
 - The AEM origin served the revised block module with the local media path and reduced-motion control behavior.
 - The custom domain visually rendered the corrected exploded assembly after Worker version `41333e2c-9e7a-497a-98f4-28e76a098701` was deployed.
-- The custom domain catalog reported `Live inventory · 10 parts`; the zero-price data-quality presentation is awaiting the final cache-key deployment and browser check.
+- Worker version `57b30420-fc5d-4f9d-936c-b66e011ff1bc` deployed cache key `aem-experience-reset-2026-09-17-2` to `aviation.ajayk.xyz/*`.
+- Final custom-domain browser acceptance reported `Live inventory · 10 parts`; all ten prices were non-zero, including ClearCom Pilot Headset at `$895.00` and in stock. The zero-price guard is source-tested but was not exercised by that healthy production response.
 - Open evidence gate: a fresh production-browser performance/accessibility trace and final product photography beyond the reviewed showcase illustration.
 
 Evidence captured on 2026-09-10 for commit `6b0685b` and the independently authored DA content source.
