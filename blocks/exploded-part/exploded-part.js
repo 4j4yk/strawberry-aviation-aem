@@ -1,4 +1,4 @@
-import { loadMotion, whenVisible } from '../../scripts/motion.js';
+import { loadMotion, motionAllowed, whenVisible } from '../../scripts/motion.js';
 
 function text(cell) { return cell?.textContent.trim() || ''; }
 
@@ -11,24 +11,24 @@ export default function decorate(block) {
   })).filter(({ name }) => name);
   const figure = document.createElement('figure');
   figure.className = 'exploded-part-figure';
-  const originalPicture = mediaRow?.querySelector('picture');
   const stage = document.createElement('div');
   stage.className = 'exploded-part-stage';
   stage.setAttribute('aria-label', 'Interactive exploded view of the fictional NavCore communication unit');
-  const picture = originalPicture?.cloneNode(true);
-  const image = picture?.querySelector('img') || document.createElement('img');
+  const authoredImage = mediaRow?.querySelector('img');
+  const image = document.createElement('img');
   image.className = 'exploded-part-product-image';
-  if (!picture) image.src = '/media/products/navcore-communication-unit-exploded.webp';
-  image.alt = image.alt || 'Fictional NavCore communication unit in an exploded assembly view';
+  image.src = '/media/products/navcore-communication-unit-exploded.webp';
+  image.alt = authoredImage?.alt || 'Fictional NavCore communication unit in an exploded assembly view';
   image.loading = 'lazy';
   image.decoding = 'async';
-  stage.append(picture || image);
+  stage.append(image);
   const controls = document.createElement('div');
   controls.className = 'exploded-part-controls';
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'exploded-part-toggle';
   toggle.textContent = 'Replay assembly view';
+  toggle.hidden = !motionAllowed();
   toggle.addEventListener('click', async () => {
     const motion = await loadMotion();
     if (motion) {

@@ -24,6 +24,13 @@ test('motion respects user preference and remains locally hosted', async () => {
   assert.doesNotMatch(motion, /https?:\/\//);
 });
 
+test('exploded assembly uses the reviewed local illustration', async () => {
+  const exploded = await readFile(new URL('../blocks/exploded-part/exploded-part.js', import.meta.url), 'utf8');
+  assert.match(exploded, /\/media\/products\/navcore-communication-unit-exploded\.webp/);
+  assert.match(exploded, /toggle\.hidden = !motionAllowed\(\)/);
+  assert.doesNotMatch(exploded, /cloneNode/);
+});
+
 test('catalog snapshot mode is non-transactional', async () => {
   const catalog = await readFile(new URL('../blocks/aviation-catalog/aviation-catalog.js', import.meta.url), 'utf8');
   assert.match(catalog, /CURATED_SNAPSHOT|result\.source === 'LIVE_MAGE_OS'/);
