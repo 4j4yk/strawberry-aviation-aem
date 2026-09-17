@@ -112,6 +112,12 @@
   font-weight: 750;
 }
 
+.aviation-catalog .aviation-catalog-price.is-under-review {
+  color: var(--accent-strong);
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
 .aviation-catalog .aviation-catalog-action { font-weight: 750; }
 
 .aviation-catalog [aria-disabled="true"] {

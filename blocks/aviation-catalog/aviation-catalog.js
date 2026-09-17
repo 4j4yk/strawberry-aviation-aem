@@ -57,15 +57,23 @@ function safeProductUrl(value, storefront, sku) {
   return `${base.origin}/catalogsearch/result/?q=${encodeURIComponent(sku)}`;
 }
 
+function needsPriceReview(value, source) {
+  if (source !== 'live') return false;
+  const numeric = String(value || '').replace(/[^\d.-]/g, '');
+  return numeric !== '' && Number(numeric) === 0;
+}
+
 function normalize(item, storefront, source = 'snapshot') {
   if (!item || typeof item !== 'object') return null;
   const sku = String(item.sku || '').trim();
   const name = String(item.name || '').trim();
   if (!sku || !name) return null;
+  const price = String(item.formatted_price || item.price || '').trim();
   return {
     sku,
     name,
-    price: String(item.formatted_price || item.price || '').trim(),
+    price,
+    priceNeedsReview: needsPriceReview(price, source),
     availability: String(item.availability || '').trim().replaceAll('_', ' ').toLowerCase(),
     url: safeProductUrl(item.url, storefront, sku),
     source,
@@ -102,7 +110,12 @@ function createCard(product) {
   details.className = 'aviation-catalog-details';
   const price = document.createElement('span');
   price.className = 'aviation-catalog-price';
-  price.textContent = product.price || 'Request price';
+  if (product.priceNeedsReview) {
+    price.classList.add('is-under-review');
+    price.textContent = 'Price pending data review';
+  } else {
+    price.textContent = product.price || 'Request price';
+  }
   const availability = document.createElement('span');
   availability.textContent = product.availability || 'Check availability';
   details.append(price, availability);
@@ -199,7 +212,9 @@ export default async function decorate(block) {
       if (!result.products.length) throw new Error('No products were returned');
       cards.replaceChildren(...result.products.map(createCard));
       if (result.source === 'LIVE_MAGE_OS') {
-        announce(block, 'live', `Live inventory · ${result.products.length} ${result.products.length === 1 ? 'part' : 'parts'}`);
+        const reviewCount = result.products.filter((product) => product.priceNeedsReview).length;
+        const reviewMessage = reviewCount ? ` · ${reviewCount} ${reviewCount === 1 ? 'price' : 'prices'} under review` : '';
+        announce(block, 'live', `Live inventory · ${result.products.length} ${result.products.length === 1 ? 'part' : 'parts'}${reviewMessage}`);
       } else {
         disableActions(cards);
         const date = displayDate(result.timestamp);

@@ -75,3 +75,11 @@ test('catalog source and interface state vocabularies remain bounded', async () 
   });
   assert.doesNotMatch(catalog, /announce\(block, ['"](?:simulated|planned)['"]/);
 });
+
+test('live catalog does not present zero-value data as a real price', async () => {
+  const catalog = await readFile(new URL('../blocks/aviation-catalog/aviation-catalog.js', import.meta.url), 'utf8');
+  assert.match(catalog, /needsPriceReview/);
+  assert.match(catalog, /Price pending data review/);
+  assert.match(catalog, /priceNeedsReview/);
+  assert.match(catalog, /under review/);
+});
