@@ -7,15 +7,15 @@
 - Production origin: versioned `scripts.js` and `styles.css` confirmed over HTTP.
 - Production CDN Worker: version `ace5c05b-1350-4545-aa8e-9e1a6f0416d4` deployed on `aviation.ajayk.xyz/*` with a versioned origin cache key.
 
-## 2026-09-17 assembly-media correction
+## 2026-09-17 production stabilization
 
 - Commit `53791b3` makes the exploded-part block use the reviewed local NavCore illustration instead of an inconsistent authored document image.
-- Contract tests: 11 passed; JavaScript and CSS lint passed.
+- Commit `450d6a4` prevents a zero-value upstream record from being presented as a credible selling price; the live card now says `Price pending data review` and the catalog status reports the review count.
+- Contract tests: 12 passed; JavaScript and CSS lint passed.
 - The AEM origin served the revised block module with the local media path and reduced-motion control behavior.
-- Custom-domain acceptance remains pending until the CDN Worker cache key is deployed and visually checked.
-- Quality gates: ESLint, Stylelint, 10 contract/documentation tests, JavaScript syntax and `git diff --check` passed.
-- Current catalog state: dated read-only snapshot because the live Mage-OS catalog request was unavailable during verification; transactional links are disabled.
-- Open evidence gate: a fresh production-browser performance/accessibility trace and final product imagery.
+- The custom domain visually rendered the corrected exploded assembly after Worker version `41333e2c-9e7a-497a-98f4-28e76a098701` was deployed.
+- The custom domain catalog reported `Live inventory · 10 parts`; the zero-price data-quality presentation is awaiting the final cache-key deployment and browser check.
+- Open evidence gate: a fresh production-browser performance/accessibility trace and final product photography beyond the reviewed showcase illustration.
 
 Evidence captured on 2026-09-10 for commit `6b0685b` and the independently authored DA content source.
 
