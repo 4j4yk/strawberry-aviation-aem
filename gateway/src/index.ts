@@ -1,12 +1,22 @@
 import { createSchema, createYoga } from 'graphql-yoga';
+import {
+  buildGroundedPrompt,
+  deterministicAnswer,
+  generatedText,
+  parseAssistantRequest,
+  retrieveKnowledge,
+  selectProducts,
+} from './assistant';
 
-type CatalogProduct = {
+export type CatalogProduct = {
   sku: string;
   name: string;
   formattedPrice: string;
   availability: 'IN_STOCK' | 'OUT_OF_STOCK';
   url: string;
 };
+
+const ASSISTANT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
 type CatalogResult = {
   items: CatalogProduct[];
@@ -150,6 +160,60 @@ function corsHeaders(request: Request, env: Env): HeadersInit {
   };
 }
 
+function responseHeaders(request: Request, env: Env): Headers {
+  const headers = new Headers(corsHeaders(request, env));
+  headers.set('cache-control', 'no-store');
+  headers.set('content-security-policy', "default-src 'none'; frame-ancestors 'none'");
+  headers.set('x-content-type-options', 'nosniff');
+  return headers;
+}
+
+async function assistant(request: Request, env: Env): Promise<Response> {
+  if (request.method !== 'POST') {
+    return Response.json({ error: 'Method not allowed' }, { status: 405, headers: responseHeaders(request, env) });
+  }
+  const length = Number(request.headers.get('content-length') || 0);
+  if (length > 4096) {
+    return Response.json({ error: 'Request body is too large' }, { status: 413, headers: responseHeaders(request, env) });
+  }
+  try {
+    const input = parseAssistantRequest(await request.json());
+    const passages = retrieveKnowledge(input.question);
+    const catalogResult = await catalog(env, input.variant, undefined, 12);
+    const products = selectProducts(input.question, catalogResult.items);
+    let answer = deterministicAnswer(products);
+    let generatedBy = 'deterministic-fallback';
+    try {
+      const result: unknown = await env.AI.run(ASSISTANT_MODEL, {
+        messages: buildGroundedPrompt(input.question, passages, products, catalogResult.source),
+        max_tokens: 320,
+        temperature: 0.1,
+      });
+      answer = generatedText(result) || answer;
+      generatedBy = generatedText(result) ? 'workers-ai' : generatedBy;
+    } catch (error) {
+      console.error(JSON.stringify({
+        event: 'assistant_generation_fallback',
+        requestId: request.headers.get('cf-ray') || 'local',
+        error: error instanceof Error ? error.message : 'unknown',
+      }));
+    }
+    return Response.json({
+      answer,
+      citations: passages.map(({ id, title, section, url }) => ({ id, title, section, url })),
+      products,
+      commerceSource: catalogResult.source,
+      generatedBy,
+      requestId: request.headers.get('cf-ray') || crypto.randomUUID(),
+      boundaries: ['read-only', 'fictional-demo', 'human-approval-required'],
+    }, { headers: responseHeaders(request, env) });
+  } catch (error) {
+    return Response.json({
+      error: error instanceof Error ? error.message : 'Invalid request',
+    }, { status: 400, headers: responseHeaders(request, env) });
+  }
+}
+
 export default {
   async fetch(request, env, ctx): Promise<Response> {
     const url = new URL(request.url);
@@ -159,6 +223,7 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(request, env) });
     }
     if (url.pathname === '/health') return Response.json({ status: 'ok' }, { headers: { 'cache-control': 'no-store' } });
+    if (url.pathname === '/assistant') return assistant(request, env);
     if (url.pathname !== '/graphql') return Response.json({ error: 'Not found' }, { status: 404 });
     const response = await yoga.fetch(request, { env, executionCtx: ctx });
     const headers = new Headers(response.headers);

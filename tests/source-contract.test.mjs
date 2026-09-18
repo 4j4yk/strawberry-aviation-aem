@@ -8,6 +8,7 @@ const requiredBlocks = [
   'aviation-catalog',
   'commerce-architecture-flow',
   'exploded-part',
+  'parts-assistant',
 ];
 
 test('all showcase blocks have JavaScript and scoped CSS entry points', async () => {
@@ -82,4 +83,21 @@ test('live catalog does not present zero-value data as a real price', async () =
   assert.match(catalog, /Price pending data review/);
   assert.match(catalog, /priceNeedsReview/);
   assert.match(catalog, /under review/);
+});
+
+test('parts assistant stays grounded, cited, and read-only', async () => {
+  const [gateway, retrieval, block, scripts] = await Promise.all([
+    readFile(new URL('../gateway/src/index.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../gateway/src/assistant.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../blocks/parts-assistant/parts-assistant.js', import.meta.url), 'utf8'),
+    readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8'),
+  ]);
+  assert.match(gateway, /url\.pathname === '\/assistant'/);
+  assert.match(gateway, /deterministic-fallback/);
+  assert.match(gateway, /boundaries: \['read-only', 'fictional-demo', 'human-approval-required'\]/);
+  assert.match(retrieval, /KNOWLEDGE_BASE/);
+  assert.match(retrieval, /Never claim certified compatibility/);
+  assert.match(block, /Continue to governed AOG request/);
+  assert.match(block, /payload\.citations/);
+  assert.match(scripts, /buildPartsAssistantAutoBlock/);
 });

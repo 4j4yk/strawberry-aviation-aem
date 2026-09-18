@@ -14,6 +14,7 @@ missing, and remote-service failure must produce a useful bounded state. Block C
 | `aog-response-timeline` | Step, description, evidence status | Optional motion and active-step emphasis | Ordered workflow remains readable |
 | `commerce-architecture-flow` | System, responsibility, evidence status | Optional flow emphasis | Ownership table remains readable |
 | `exploded-part` | Product image plus component/description rows | Optional staged assembly motion | Complete image and component list remain visible |
+| `parts-assistant` | Gateway, storefront, aircraft variant | Retrieves approved guidance and read-only catalog facts with citations | Reports a bounded error and retains the governed AOG link |
 
 ## Global shell
 

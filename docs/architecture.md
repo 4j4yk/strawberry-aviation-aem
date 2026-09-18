@@ -10,6 +10,7 @@
 | Aircraft compatibility and AOG eligibility | Strawberry Mage-OS module | Sanitized read-only catalog fields |
 | Cart, customer, approval and order | Mage-OS | Secure handoff to the Luma reference store |
 | Fallback product cards | This repository | Dated snapshot; never transactional |
+| Assistant guidance and citations | Cloudflare Worker plus approved repository knowledge | Read-only, bounded and visibly fictional |
 
 ## Live request
 
@@ -29,6 +30,20 @@ Mage-OS timeout/error -> GraphQL gateway returns CURATED_SNAPSHOT + timestamp
 
 The static response is evidence of graceful degradation, not evidence that commerce is operational. It contains no
 customer, cart, order, stock quantity, secret, or mutable state.
+
+## Grounded assistant path
+
+```text
+Browser -> AEM parts-assistant -> Cloudflare /assistant
+                                  |-> approved versioned knowledge passages
+                                  |-> read-only Mage-OS catalog adapter
+                                  `-> Workers AI grounded synthesis
+```
+
+The Worker supplies citations independently of model output and falls back to a deterministic answer if generation
+fails. The model never receives credentials or customer context. It cannot certify aircraft compatibility or mutate
+inventory, carts, approvals, checkout, orders, payments, or fulfillment. The user must continue into the governed
+Mage-OS AOG flow for transactional work.
 
 ## Motion boundary
 

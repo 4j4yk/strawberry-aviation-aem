@@ -12,6 +12,8 @@ import {
   buildBlock,
 } from './aem.js';
 
+const DEFAULT_ASSISTANT_GATEWAY = 'https://strawberry-catalog-gateway.ajaykhampariya14.workers.dev';
+
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
     createHTML: (s) => s, // avoid stack overflow
@@ -74,6 +76,23 @@ function buildWidgetAutoBlocks(main) {
 }
 
 /**
+ * Adds the site-wide read-only parts assistant before the AOG workflow.
+ * @param {Element} main The container element
+ */
+function buildPartsAssistantAutoBlock(main) {
+  if (main.querySelector('.parts-assistant')) return;
+  const aogSection = main.querySelector('.aog-response-timeline')?.closest('.section');
+  if (!aogSection) return;
+  const section = document.createElement('div');
+  section.append(buildBlock('parts-assistant', [
+    ['Assistant gateway', DEFAULT_ASSISTANT_GATEWAY],
+    ['Storefront', 'https://store.ajayk.xyz'],
+    ['Aircraft variant', 'SAR-90-200'],
+  ]));
+  aogSection.before(section);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -97,6 +116,7 @@ function buildAutoBlocks(main) {
       });
     }
     buildWidgetAutoBlocks(main);
+    buildPartsAssistantAutoBlock(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -111,6 +131,7 @@ function decoratePageLandmarks(main) {
   const landmarkBlocks = {
     'aircraft-compatibility-explorer': 'products',
     'exploded-part': 'assembly',
+    'parts-assistant': 'assistant',
     'aog-response-timeline': 'aog-support',
     'commerce-architecture-flow': 'architecture',
   };

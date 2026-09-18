@@ -1,5 +1,15 @@
 # Release evidence
 
+## 2026-09-18 grounded parts assistant
+
+- Implemented a site-wide `parts-assistant` block and a bounded `POST /assistant` gateway route.
+- Retrieval uses six versioned approved passages; current product matches come from the existing read-only Mage-OS catalog adapter.
+- Workers AI synthesis is constrained by supplied evidence, while citations are attached by the server independently of model output.
+- The endpoint enforces bounded input, exact-origin CORS, no-store responses, read-only/fictitious/human-approval boundaries, and deterministic generation fallback.
+- Local end-to-end verification returned a Workers AI response, three citations, live Mage-OS facts, and the AeroFlow Hydraulic Pump match for `SAR-90-200`.
+- Source verification passed 16 Node tests, ESLint, Stylelint, TypeScript, Worker dry-run, and a 34.5 ms active local startup profile.
+- Production deployment and custom-domain browser acceptance remain pending in this section until separately recorded below.
+
 ## 2026-09-16 experience reset
 
 - Repository head: `e260602` (`main`).

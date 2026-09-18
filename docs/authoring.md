@@ -48,6 +48,20 @@ the fictional-document disclaimer in the surrounding section.
 | ERP export fails once | Demonstrate deterministic retry | simulated |
 | Shipment created | Record native Mage-OS fulfillment | implemented |
 
+## Parts assistant
+
+The homepage currently adds the site-wide assistant automatically before the AOG section so the first vertical slice
+does not require a coupled content publication. The same block can be authored explicitly later:
+
+| parts-assistant |  |
+| --- | --- |
+| Assistant gateway | https://strawberry-catalog-gateway.ajaykhampariya14.workers.dev |
+| Storefront | https://store.ajayk.xyz |
+| Aircraft variant | SAR-90-200 |
+
+The assistant is read-only. It may retrieve approved guidance and public catalog facts, but it cannot certify
+compatibility, mutate carts, approve purchasing, reserve inventory, or create orders.
+
 ## Commerce architecture flow
 
 | commerce-architecture-flow |  |  |
