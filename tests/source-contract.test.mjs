@@ -100,4 +100,5 @@ test('parts assistant stays grounded, cited, and read-only', async () => {
   assert.match(block, /Continue to governed AOG request/);
   assert.match(block, /payload\.citations/);
   assert.match(scripts, /buildPartsAssistantAutoBlock/);
+  assert.match(scripts, /aogSection\.parentElement !== main/);
 });

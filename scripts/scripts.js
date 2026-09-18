@@ -81,8 +81,11 @@ function buildWidgetAutoBlocks(main) {
  */
 function buildPartsAssistantAutoBlock(main) {
   if (main.querySelector('.parts-assistant')) return;
-  const aogSection = main.querySelector('.aog-response-timeline')?.closest('.section');
-  if (!aogSection) return;
+  let aogSection = main.querySelector('.aog-response-timeline');
+  while (aogSection?.parentElement && aogSection.parentElement !== main) {
+    aogSection = aogSection.parentElement;
+  }
+  if (!aogSection || aogSection.parentElement !== main) return;
   const section = document.createElement('div');
   section.append(buildBlock('parts-assistant', [
     ['Assistant gateway', DEFAULT_ASSISTANT_GATEWAY],
