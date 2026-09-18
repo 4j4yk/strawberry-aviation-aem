@@ -86,11 +86,12 @@ test('live catalog does not present zero-value data as a real price', async () =
 });
 
 test('parts assistant stays grounded, cited, and read-only', async () => {
-  const [gateway, retrieval, block, scripts] = await Promise.all([
+  const [gateway, retrieval, block, scripts, head] = await Promise.all([
     readFile(new URL('../gateway/src/index.ts', import.meta.url), 'utf8'),
     readFile(new URL('../gateway/src/assistant.ts', import.meta.url), 'utf8'),
     readFile(new URL('../blocks/parts-assistant/parts-assistant.js', import.meta.url), 'utf8'),
     readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8'),
+    readFile(new URL('../head.html', import.meta.url), 'utf8'),
   ]);
   assert.match(gateway, /url\.pathname === '\/assistant'/);
   assert.match(gateway, /deterministic-fallback/);
@@ -102,4 +103,5 @@ test('parts assistant stays grounded, cited, and read-only', async () => {
   assert.match(scripts, /buildPartsAssistantAutoBlock/);
   assert.match(scripts, /decorateBlock\(block\)/);
   assert.match(scripts, /decorateBlocks\(main\);\s*buildPartsAssistantAutoBlock\(main\)/);
+  assert.match(head, /scripts\.js\?v=20260918-1/);
 });
