@@ -4,6 +4,7 @@ import {
   decorateIcons,
   decorateSections,
   decorateBlocks,
+  decorateBlock,
   decorateTemplateAndTheme,
   waitForFirstImage,
   loadSection,
@@ -81,18 +82,22 @@ function buildWidgetAutoBlocks(main) {
  */
 function buildPartsAssistantAutoBlock(main) {
   if (main.querySelector('.parts-assistant')) return;
-  let aogSection = main.querySelector('.aog-response-timeline');
-  while (aogSection?.parentElement && aogSection.parentElement !== main) {
-    aogSection = aogSection.parentElement;
-  }
-  if (!aogSection || aogSection.parentElement !== main) return;
-  const section = document.createElement('div');
-  section.append(buildBlock('parts-assistant', [
+  const aogSection = main.querySelector('.aog-response-timeline')?.closest('.section');
+  if (!aogSection) return;
+  const block = buildBlock('parts-assistant', [
     ['Assistant gateway', DEFAULT_ASSISTANT_GATEWAY],
     ['Storefront', 'https://store.ajayk.xyz'],
     ['Aircraft variant', 'SAR-90-200'],
-  ]));
+  ]);
+  const wrapper = document.createElement('div');
+  wrapper.append(block);
+  const section = document.createElement('div');
+  section.className = 'section';
+  section.dataset.sectionStatus = 'initialized';
+  section.style.display = 'none';
+  section.append(wrapper);
   aogSection.before(section);
+  decorateBlock(block);
 }
 
 /**
@@ -119,7 +124,6 @@ function buildAutoBlocks(main) {
       });
     }
     buildWidgetAutoBlocks(main);
-    buildPartsAssistantAutoBlock(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -211,6 +215,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildPartsAssistantAutoBlock(main);
   decorateButtons(main);
   decoratePageLandmarks(main);
 }
