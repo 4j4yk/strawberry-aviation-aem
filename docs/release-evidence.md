@@ -8,7 +8,11 @@
 - The endpoint enforces bounded input, exact-origin CORS, no-store responses, read-only/fictitious/human-approval boundaries, and deterministic generation fallback.
 - Local end-to-end verification returned a Workers AI response, three citations, live Mage-OS facts, and the AeroFlow Hydraulic Pump match for `SAR-90-200`.
 - Source verification passed 16 Node tests, ESLint, Stylelint, TypeScript, Worker dry-run, and a 34.5 ms active local startup profile.
-- Production deployment and custom-domain browser acceptance remain pending in this section until separately recorded below.
+- Commit `6c27b85` introduced the assistant API and UI; follow-up commits `f62fa8b`, `c5cb8fd`, and `55a0eae` corrected AEM insertion timing and explicit asset versioning discovered through production-browser acceptance.
+- Catalog gateway Worker version `c284b6f0-44e9-42c1-88a6-8f031fdedf77` deployed the Workers AI binding and `POST /assistant` route.
+- CDN Worker version `7887a54a-c628-4723-a0bd-f9916291db10` deployed the final AEM cache key.
+- Production API acceptance returned HTTP 200, `generatedBy: workers-ai`, `commerceSource: LIVE_MAGE_OS`, three approved citations, the AeroFlow product match, and explicit read-only/fictitious/human-approval boundaries. Unapproved-origin preflight returned HTTP 403.
+- Custom-domain browser acceptance confirmed the assistant between Assembly and AOG Support; its submitted response rendered live product links, three citation links, and only the governed AOG handoff.
 
 ## 2026-09-16 experience reset
 
