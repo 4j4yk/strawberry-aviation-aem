@@ -21,6 +21,26 @@ export type AssistantRequest = {
 
 const DEFAULT_VARIANT = 'SAR-90-200';
 const MAX_QUESTION_LENGTH = 600;
+const ASSISTANT_SCOPE_MESSAGE = 'I can only help in English with Strawberry Aviation parts, catalog facts, fictional compatibility boundaries, the governed AOG process, or this demo architecture.';
+const DOMAIN_TERMS = /\b(?:aog|part|parts|product|catalog|inventory|stock|price|pricing|availability|compatible|compatibility|variant|pump|hydraulic|brake|avionics|landing|light|oxygen|filter|headset|fluid|communication|approval|manager|order|checkout|cart|fulfillment|erp|mage-?os|aem|gateway|architecture|composable|snapshot|storefront)\b/i;
+const PRODUCT_SKU = /\bSAS-[A-Z0-9-]+\b/i;
+const SIMPLE_GREETING = /^(?:hi|hello|hey|help|what can you do)[!?., ]*$/i;
+const PROMPT_INJECTION = [
+  /\b(?:ignore|disregard|override|bypass|forget)\b.{0,50}\b(?:instruction|instructions|rule|rules|prompt|policy|policies)\b/i,
+  /\b(?:system prompt|developer message|hidden instructions?|jailbreak|prompt injection|dan mode)\b/i,
+  /\b(?:reveal|show|print|repeat|copy)\b.{0,40}\b(?:system|developer|prompt|instructions?|message)\b/i,
+  /\b(?:act as|pretend to be|roleplay as|new task)\b/i,
+  /\binstructions?\b.{0,40}\b(?:do not apply|no longer apply|irrelevant)\b/i,
+];
+const CODE_REQUEST = /\b(?:write|generate|implement|solve|debug|provide|create|give|output|return|show|explain)\b.{0,100}\b(?:python|javascript|typescript|java|c\+\+|dfs|bfs|leetcode|source code|shell command)\b/i;
+const UNSUPPORTED_CREATIVE_REQUEST = /\b(?:write|generate|create|compose|tell)\b.{0,80}\b(?:poem|story|joke|recipe|email|essay|song)\b/i;
+const CODE_LIKE_OUTPUT = /```|\b(?:def|import)\s+[a-z_][a-z0-9_]*|\bclass\s+[a-z_][a-z0-9_]*\s*[:({]|\bfunction\s+[a-z_][a-z0-9_]*\s*\(/i;
+const UNSAFE_OUTPUT = [
+  /\b(?:system prompt|developer message|hidden instructions?|secret|password|api key|credential|access token)\b/i,
+  /\b(?:bypass|skip|override)\b.{0,40}\b(?:approval|checkout|policy|guardrail)\b/i,
+  /\b(?:remove|install|repair|disconnect|torque|open|disassemble)\b.{0,60}\b(?:pump|part|component|line|housing|assembly)\b/i,
+];
+const UNSAFE_TOPIC = /\b(?:malware|ransomware|phishing|exploit)\b/i;
 const STOP_WORDS = new Set([
   'a', 'an', 'and', 'are', 'can', 'do', 'for', 'how', 'i', 'in', 'is', 'it', 'me', 'my',
   'of', 'on', 'or', 'the', 'to', 'what', 'when', 'where', 'which', 'with', 'you',
@@ -81,10 +101,34 @@ function score(questionTokens: string[], value: string): number {
   return questionTokens.reduce((total, token) => total + (haystack.includes(token) ? 1 : 0), 0);
 }
 
+function normalizeQuestion(value: unknown): string {
+  return String(value || '')
+    .normalize('NFKC')
+    .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function assistantScope(question: string): { allowed: boolean; message: string } {
+  const rejected = PROMPT_INJECTION.some((pattern) => pattern.test(question))
+    || CODE_REQUEST.test(question)
+    || UNSUPPORTED_CREATIVE_REQUEST.test(question)
+    || UNSAFE_TOPIC.test(question)
+    || /[^\x00-\x7F]/.test(question);
+  const clauses = question.split(/(?:[.;!?]+|\b(?:and then|then|also|after that)\b)/i)
+    .map((clause) => clause.trim())
+    .filter(Boolean);
+  const relevant = SIMPLE_GREETING.test(question) || (
+    clauses.length > 0
+    && clauses.every((clause) => DOMAIN_TERMS.test(clause) || PRODUCT_SKU.test(clause))
+  );
+  return { allowed: relevant && !rejected, message: ASSISTANT_SCOPE_MESSAGE };
+}
+
 export function parseAssistantRequest(value: unknown): AssistantRequest {
   if (!value || typeof value !== 'object') throw new Error('Request body must be a JSON object');
   const record = value as Record<string, unknown>;
-  const question = String(record.question || '').trim();
+  const question = normalizeQuestion(record.question);
   const variant = String(record.variant || DEFAULT_VARIANT).trim();
   if (question.length < 3) throw new Error('Question must contain at least 3 characters');
   if (question.length > MAX_QUESTION_LENGTH) throw new Error(`Question must not exceed ${MAX_QUESTION_LENGTH} characters`);
@@ -149,4 +193,12 @@ export function generatedText(value: unknown): string | null {
   if (!value || typeof value !== 'object') return null;
   const response = String((value as Record<string, unknown>).response || '').trim();
   return response || null;
+}
+
+export function safeGeneratedText(value: unknown): string | null {
+  const response = generatedText(value);
+  const relevant = response && (DOMAIN_TERMS.test(response) || PRODUCT_SKU.test(response));
+  const unsafe = response && UNSAFE_OUTPUT.some((pattern) => pattern.test(response));
+  if (!response || !relevant || unsafe || CODE_LIKE_OUTPUT.test(response) || !/\[[1-3]\]/.test(response)) return null;
+  return response;
 }

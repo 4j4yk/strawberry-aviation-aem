@@ -2,9 +2,10 @@ import { createSchema, createYoga } from 'graphql-yoga';
 import {
   buildGroundedPrompt,
   deterministicAnswer,
-  generatedText,
+  assistantScope,
   parseAssistantRequest,
   retrieveKnowledge,
+  safeGeneratedText,
   selectProducts,
 } from './assistant';
 
@@ -193,6 +194,18 @@ async function assistant(request: Request, env: Env): Promise<Response> {
   }
   try {
     const input = parseAssistantRequest(await request.json());
+    const scope = assistantScope(input.question);
+    if (!scope.allowed) {
+      return Response.json({
+        answer: scope.message,
+        citations: [],
+        products: [],
+        commerceSource: 'NOT_QUERIED',
+        generatedBy: 'policy-guardrail',
+        requestId: request.headers.get('cf-ray') || crypto.randomUUID(),
+        boundaries: ['read-only', 'fictional-demo', 'human-approval-required', 'domain-scoped'],
+      }, { headers: responseHeaders(request, env) });
+    }
     const passages = retrieveKnowledge(input.question);
     const catalogResult = await catalog(env, input.variant, undefined, 12);
     const products = selectProducts(input.question, catalogResult.items);
@@ -204,8 +217,9 @@ async function assistant(request: Request, env: Env): Promise<Response> {
         max_tokens: 220,
         temperature: 0.1,
       }), ASSISTANT_GENERATION_TIMEOUT_MS);
-      answer = generatedText(result) || answer;
-      generatedBy = generatedText(result) ? 'workers-ai' : generatedBy;
+      const generated = safeGeneratedText(result);
+      answer = generated || answer;
+      generatedBy = generated ? 'workers-ai' : generatedBy;
     } catch (error) {
       console.error(JSON.stringify({
         event: 'assistant_generation_fallback',

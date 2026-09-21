@@ -95,6 +95,8 @@ test('parts assistant stays grounded, cited, and read-only', async () => {
   ]);
   assert.match(gateway, /url\.pathname === '\/assistant'/);
   assert.match(gateway, /deterministic-fallback/);
+  assert.ok(gateway.indexOf('assistantScope(input.question)') < gateway.indexOf('catalog(env, input.variant'));
+  assert.match(gateway, /generatedBy: 'policy-guardrail'/);
   assert.match(gateway, /ASSISTANT_GENERATION_TIMEOUT_MS = 7000/);
   assert.match(gateway, /boundedGeneration\(env\.AI\.run/);
   assert.match(gateway, /boundaries: \['read-only', 'fictional-demo', 'human-approval-required'\]/);

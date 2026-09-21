@@ -156,7 +156,11 @@ export default async function decorate(block) {
       answer.textContent = payload.answer;
       const meta = document.createElement('p');
       meta.className = 'parts-assistant-meta';
-      meta.textContent = `${payload.generatedBy === 'workers-ai' ? 'AI response' : 'Bounded fallback'} · ${payload.commerceSource === 'LIVE_MAGE_OS' ? 'Live Mage-OS facts' : 'Dated catalog snapshot'}`;
+      const responseType = payload.generatedBy === 'workers-ai' ? 'AI response' : 'Bounded response';
+      let commerceType = 'Dated catalog snapshot';
+      if (payload.commerceSource === 'LIVE_MAGE_OS') commerceType = 'Live Mage-OS facts';
+      if (payload.commerceSource === 'NOT_QUERIED') commerceType = 'No commerce lookup';
+      meta.textContent = `${responseType} · ${commerceType}`;
       const content = [answer, meta];
       if (payload.products?.length) content.push(productList(payload.products, config.storefront));
       if (payload.citations?.length) {
