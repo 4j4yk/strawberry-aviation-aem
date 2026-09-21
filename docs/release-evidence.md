@@ -1,5 +1,16 @@
 # Release evidence
 
+## 2026-09-21 assistant scope guardrails
+
+- Reproduced the reported failure in production: an instruction-override request for a Python DFS algorithm returned generated code with HTTP 200.
+- Added server-side English/domain scope enforcement immediately after request parsing and before catalog access or Workers AI inference. Unsupported, mixed-scope, prompt-injection, coding, creative, unsafe-topic, and non-ASCII-confusable requests return a deterministic `policy-guardrail` response with `commerceSource: NOT_QUERIED`.
+- Added output validation as defense in depth: generated text must be cited and domain-relevant and is discarded if it resembles code, prompt/credential disclosure, approval bypass, or maintenance instruction.
+- Preserved normal parts, SKU, AOG, approval, catalog ownership, checkout, and demo-architecture questions. Added explicit coverage for architecture questions containing the words `algorithm` and `script`.
+- Verification passed ESLint, Stylelint, 18 Node contract tests, Worker dry-run, TypeScript, and patch hygiene. A separate bypass review supplied additional mixed-prompt, Unicode-confusable, output-validation, and compatibility cases that are now regression-tested.
+- Production API acceptance blocked the original DFS prompt and a mixed capital-of-France plus hydraulic-pump prompt without a commerce lookup; legitimate hydraulic-pump and gateway-snapshot questions still returned grounded deterministic responses and live Mage-OS facts where applicable.
+- Production browser acceptance rendered the domain-scope response and no generated code for the original prompt. Versioned block imports were added so future block changes use explicit browser cache keys.
+- Gateway Worker version `4516e282-9fc4-45aa-a2fe-71e42ec08056`; CDN Worker version `9866cfb4-8450-4058-b05b-69b0ef74983d`; repository release commit `a5b7906`.
+
 ## 2026-09-18 grounded parts assistant
 
 - Implemented a site-wide `parts-assistant` block and a bounded `POST /assistant` gateway route.
