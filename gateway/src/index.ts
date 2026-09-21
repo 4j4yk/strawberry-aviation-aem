@@ -16,7 +16,8 @@ export type CatalogProduct = {
   url: string;
 };
 
-const ASSISTANT_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+const ASSISTANT_MODEL = '@cf/meta/llama-3.2-1b-instruct';
+const ASSISTANT_GENERATION_TIMEOUT_MS = 7000;
 
 type CatalogResult = {
   items: CatalogProduct[];
@@ -168,6 +169,20 @@ function responseHeaders(request: Request, env: Env): Headers {
   return headers;
 }
 
+async function boundedGeneration<T>(generation: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      generation,
+      new Promise<T>((_resolve, reject) => {
+        timeout = setTimeout(() => reject(new Error('generation_timeout')), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeout !== undefined) clearTimeout(timeout);
+  }
+}
+
 async function assistant(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') {
     return Response.json({ error: 'Method not allowed' }, { status: 405, headers: responseHeaders(request, env) });
@@ -184,11 +199,11 @@ async function assistant(request: Request, env: Env): Promise<Response> {
     let answer = deterministicAnswer(products);
     let generatedBy = 'deterministic-fallback';
     try {
-      const result: unknown = await env.AI.run(ASSISTANT_MODEL, {
+      const result: unknown = await boundedGeneration(env.AI.run(ASSISTANT_MODEL, {
         messages: buildGroundedPrompt(input.question, passages, products, catalogResult.source),
-        max_tokens: 320,
+        max_tokens: 220,
         temperature: 0.1,
-      });
+      }), ASSISTANT_GENERATION_TIMEOUT_MS);
       answer = generatedText(result) || answer;
       generatedBy = generatedText(result) ? 'workers-ai' : generatedBy;
     } catch (error) {

@@ -95,13 +95,17 @@ test('parts assistant stays grounded, cited, and read-only', async () => {
   ]);
   assert.match(gateway, /url\.pathname === '\/assistant'/);
   assert.match(gateway, /deterministic-fallback/);
+  assert.match(gateway, /ASSISTANT_GENERATION_TIMEOUT_MS = 7000/);
+  assert.match(gateway, /boundedGeneration\(env\.AI\.run/);
   assert.match(gateway, /boundaries: \['read-only', 'fictional-demo', 'human-approval-required'\]/);
   assert.match(retrieval, /KNOWLEDGE_BASE/);
   assert.match(retrieval, /Never claim certified compatibility/);
   assert.match(block, /Continue to governed AOG request/);
   assert.match(block, /payload\.citations/);
+  assert.match(block, /AbortSignal\.timeout\(15000\)/);
+  assert.match(block, /Scout is taking longer than expected/);
   assert.match(scripts, /buildPartsAssistantAutoBlock/);
   assert.match(scripts, /decorateBlock\(block\)/);
   assert.match(scripts, /decorateBlocks\(main\);\s*buildPartsAssistantAutoBlock\(main\)/);
-  assert.match(head, /scripts\.js\?v=20260918-1/);
+  assert.match(head, /scripts\.js\?v=20260921-1/);
 });

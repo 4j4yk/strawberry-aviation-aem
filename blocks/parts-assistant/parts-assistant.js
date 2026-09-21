@@ -147,7 +147,7 @@ export default async function decorate(block) {
         credentials: 'omit',
         headers: { accept: 'application/json', 'content-type': 'application/json' },
         body: JSON.stringify({ question: input.value.trim(), variant: config.variant }),
-        signal: AbortSignal.timeout(12000),
+        signal: AbortSignal.timeout(15000),
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || `Assistant returned ${response.status}`);
@@ -173,7 +173,10 @@ export default async function decorate(block) {
       result.replaceChildren(...content);
     } catch (error) {
       result.classList.add('is-error');
-      result.textContent = error instanceof Error ? error.message : 'The assistant is temporarily unavailable.';
+      let message = 'The assistant is temporarily unavailable.';
+      if (error instanceof Error) message = error.message;
+      if (error?.name === 'TimeoutError') message = 'Scout is taking longer than expected. Please try again.';
+      result.textContent = message;
     } finally {
       submit.disabled = false;
       submit.textContent = 'Ask Scout';

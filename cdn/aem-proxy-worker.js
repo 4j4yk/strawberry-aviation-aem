@@ -1,5 +1,5 @@
 const ORIGIN_HOSTNAME = 'main--strawberry-aviation-aem--4j4yk.aem.live';
-const CACHE_VERSION = 'aem-grounded-assistant-2026-09-18-4';
+const CACHE_VERSION = 'aem-grounded-assistant-2026-09-21-1';
 
 function extension(pathname) {
   const basename = pathname.split('/').pop();
