@@ -507,7 +507,7 @@ function buildBlock(blockName, content) {
  * Loads JS and CSS for a block.
  * @param {Element} block The block element
  */
-const BLOCK_ASSET_VERSION = '20260921-2';
+const BLOCK_ASSET_VERSION = '20260921-3';
 
 async function loadBlock(block) {
   const status = block.dataset.blockStatus;

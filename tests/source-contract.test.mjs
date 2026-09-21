@@ -110,7 +110,7 @@ test('parts assistant stays grounded, cited, and read-only', async () => {
   assert.match(scripts, /buildPartsAssistantAutoBlock/);
   assert.match(scripts, /decorateBlock\(block\)/);
   assert.match(scripts, /decorateBlocks\(main\);\s*buildPartsAssistantAutoBlock\(main\)/);
-  assert.match(aem, /BLOCK_ASSET_VERSION = '20260921-2'/);
-  assert.match(head, /aem\.js\?v=20260921-2/);
-  assert.match(head, /scripts\.js\?v=20260921-2/);
+  assert.match(aem, /BLOCK_ASSET_VERSION = '20260921-3'/);
+  assert.match(head, /aem\.js\?v=20260921-3/);
+  assert.match(head, /scripts\.js\?v=20260921-3/);
 });
