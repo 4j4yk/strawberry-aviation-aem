@@ -57,13 +57,22 @@ function safeProductUrl(value, storefront, sku) {
   return `${base.origin}/catalogsearch/result/?q=${encodeURIComponent(sku)}`;
 }
 
+function safeImageUrl(value, commerceOrigin) {
+  if (!value) return '';
+  try {
+    const base = new URL(commerceOrigin);
+    const candidate = new URL(String(value), base);
+    return candidate.origin === base.origin ? candidate.href : '';
+  } catch { return ''; }
+}
+
 function needsPriceReview(value, source) {
   if (source !== 'live') return false;
   const numeric = String(value || '').replace(/[^\d.-]/g, '');
   return numeric !== '' && Number(numeric) === 0;
 }
 
-function normalize(item, storefront, source = 'snapshot') {
+function normalize(item, storefront, source = 'snapshot', commerceOrigin = storefront) {
   if (!item || typeof item !== 'object') return null;
   const sku = String(item.sku || '').trim();
   const name = String(item.name || '').trim();
@@ -76,6 +85,7 @@ function normalize(item, storefront, source = 'snapshot') {
     priceNeedsReview: needsPriceReview(price, source),
     availability: String(item.availability || '').trim().replaceAll('_', ' ').toLowerCase(),
     url: safeProductUrl(item.url, storefront, sku),
+    imageUrl: safeImageUrl(item.imageUrl, commerceOrigin),
     source,
     snapshot: String(item.snapshot || '').trim(),
   };
@@ -92,10 +102,20 @@ function createCard(product) {
   const article = document.createElement('article');
   const media = document.createElement('div');
   media.className = 'aviation-catalog-media';
-  media.setAttribute('aria-hidden', 'true');
   const monogram = document.createElement('span');
   monogram.textContent = productMonogram(product.name);
-  media.append(monogram);
+  monogram.setAttribute('role', 'img');
+  monogram.setAttribute('aria-label', `Image unavailable for ${product.name}`);
+  if (product.imageUrl) {
+    const image = document.createElement('img');
+    image.src = product.imageUrl;
+    image.alt = product.name;
+    image.loading = 'lazy';
+    image.addEventListener('error', () => image.replaceWith(monogram), { once: true });
+    media.append(image);
+  } else {
+    media.append(monogram);
+  }
   const content = document.createElement('div');
   content.className = 'aviation-catalog-content';
   const meta = document.createElement('p');
@@ -145,7 +165,7 @@ async function fetchCatalog(config) {
       credentials: 'omit',
       headers: { accept: 'application/json', 'content-type': 'application/json' },
       body: JSON.stringify({
-        query: 'query AviationCatalog($variant: String!, $first: Int!) { products(variant: $variant, first: $first) { items { sku name formattedPrice availability url } source dataTimestamp totalCount } }',
+        query: 'query AviationCatalog($variant: String!, $first: Int!) { products(variant: $variant, first: $first) { items { sku name formattedPrice availability url imageUrl } source dataTimestamp totalCount } }',
         variables: { variant: config.variant, first: 12 },
       }),
       signal: controller.signal,
@@ -158,7 +178,7 @@ async function fetchCatalog(config) {
       products: result.items.map((item) => normalize({
         ...item,
         formatted_price: item.formattedPrice,
-      }, config.storefront, result.source === 'LIVE_MAGE_OS' ? 'live' : 'snapshot')).filter(Boolean),
+      }, config.storefront, result.source === 'LIVE_MAGE_OS' ? 'live' : 'snapshot', config.origin)).filter(Boolean),
       source: result.source,
       timestamp: result.dataTimestamp,
     };

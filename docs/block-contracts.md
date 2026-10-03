@@ -9,7 +9,7 @@ missing, and remote-service failure must produce a useful bounded state. Block C
 | --- | --- | --- | --- |
 | `hero` | Picture, heading, body, up to two links | Adds presentation hooks only | Original content remains visible |
 | `cards` | One row per card with image and copy | Normalizes card structure | Original links and copy remain usable |
-| `aviation-catalog` | Gateway, origins, variant, dated fallback rows | Fetches normalized product summaries | Renders snapshot rows, labels date, disables actions |
+| `aviation-catalog` | Gateway, origins, variant, dated fallback rows | Fetches normalized product summaries and an optional image URL | Renders images only from the configured commerce origin, falls back to accessible initials, labels snapshots, disables actions |
 | `aircraft-compatibility-explorer` | System, aircraft variant, description | Emits a selected variant for the catalog | Rows remain readable as compatibility reference |
 | `aog-response-timeline` | Step, description, evidence status | Optional motion and active-step emphasis | Ordered workflow remains readable |
 | `commerce-architecture-flow` | System, responsibility, evidence status | Optional flow emphasis | Ownership table remains readable |

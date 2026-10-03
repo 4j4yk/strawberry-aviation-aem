@@ -39,6 +39,20 @@ test('catalog snapshot mode is non-transactional', async () => {
   assert.match(catalog, /aria-disabled/);
 });
 
+test('catalog product images stay on the configured commerce origin and have an accessible fallback', async () => {
+  const [gateway, catalog] = await Promise.all([
+    readFile(new URL('../gateway/src/index.ts', import.meta.url), 'utf8'),
+    readFile(new URL('../blocks/aviation-catalog/aviation-catalog.js', import.meta.url), 'utf8'),
+  ]);
+  assert.match(gateway, /return candidate\.origin === commerceOrigin \? candidate\.href : null/);
+  assert.match(gateway, /imageUrl: String/);
+  assert.match(catalog, /function safeImageUrl\(value, commerceOrigin\)/);
+  assert.match(catalog, /candidate\.origin === base\.origin \? candidate\.href : ''/);
+  assert.match(catalog, /imageUrl \}\s*source dataTimestamp/);
+  assert.match(catalog, /Image unavailable for \$\{product\.name\}/);
+  assert.match(catalog, /image\.addEventListener\('error'/);
+});
+
 test('global shell has accessible local fallbacks', async () => {
   const [header, footer] = await Promise.all([
     readFile(new URL('../blocks/header/header.js', import.meta.url), 'utf8'),

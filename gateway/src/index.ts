@@ -15,6 +15,7 @@ export type CatalogProduct = {
   formattedPrice: string;
   availability: 'IN_STOCK' | 'OUT_OF_STOCK';
   url: string;
+  imageUrl: string | null;
 };
 
 const ASSISTANT_MODEL = '@cf/meta/llama-3.2-1b-instruct';
@@ -40,6 +41,7 @@ const SNAPSHOT: CatalogProduct[] = [
     formattedPrice: '$12,450.00',
     availability: 'IN_STOCK',
     url: 'https://store.ajayk.xyz/catalogsearch/result/?q=SAS-HYD-1001',
+    imageUrl: null,
   },
   {
     sku: 'SAS-BRK-2001',
@@ -47,6 +49,7 @@ const SNAPSHOT: CatalogProduct[] = [
     formattedPrice: '$8,760.00',
     availability: 'IN_STOCK',
     url: 'https://store.ajayk.xyz/catalogsearch/result/?q=SAS-BRK-2001',
+    imageUrl: null,
   },
   {
     sku: 'SAS-AVN-3001',
@@ -54,6 +57,7 @@ const SNAPSHOT: CatalogProduct[] = [
     formattedPrice: '$24,900.00',
     availability: 'OUT_OF_STOCK',
     url: 'https://store.ajayk.xyz/catalogsearch/result/?q=SAS-AVN-3001',
+    imageUrl: null,
   },
 ];
 
@@ -78,6 +82,12 @@ function normalizedProduct(value: unknown, commerceOrigin: string): CatalogProdu
     formattedPrice: String(record.formatted_price || '').trim(),
     availability: record.availability === 'in_stock' ? 'IN_STOCK' : 'OUT_OF_STOCK',
     url,
+    imageUrl: (() => {
+      try {
+        const candidate = new URL(String(record.image_url || ''), commerceOrigin);
+        return candidate.origin === commerceOrigin ? candidate.href : null;
+      } catch { return null; }
+    })(),
   };
 }
 
@@ -124,7 +134,7 @@ const yoga = createYoga<ServerContext>({
     typeDefs: /* GraphQL */ `
       enum Availability { IN_STOCK OUT_OF_STOCK }
       enum DataSource { LIVE_MAGE_OS CURATED_SNAPSHOT }
-      type Product { sku: ID!, name: String!, formattedPrice: String!, availability: Availability!, url: String! }
+      type Product { sku: ID!, name: String!, formattedPrice: String!, availability: Availability!, url: String!, imageUrl: String }
       type ProductConnection { items: [Product!]!, totalCount: Int!, source: DataSource!, dataTimestamp: String! }
       type ServiceStatus { status: String!, commerceOrigin: String! }
       type Query {

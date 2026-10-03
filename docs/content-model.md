@@ -24,6 +24,7 @@ Every product card uses one normalized model regardless of whether data came fro
 | `sku` | Yes | Stable commerce identifier |
 | `name` | Yes | Human-readable part name |
 | `image` | Yes for published cards | Consistent 4:3 or square crop; descriptive alt text |
+| `imageUrl` | No | Gateway-normalized Mage-OS `image_url`; only same-origin commerce URLs render. Missing, off-origin, or failed images show accessible initials |
 | `formattedPrice` | No | If absent, display `Request quote`; never invent a price |
 | `availability` | Yes | One of `IN_STOCK`, `OUT_OF_STOCK`, or `UNKNOWN` before presentation mapping |
 | `compatibility` | No | Aircraft family/variant claim from the governed commerce source |
@@ -50,4 +51,3 @@ These labels have distinct meanings and should not be substituted for one anothe
 - Keep implementation terms on `/architecture`.
 - Never present the fictional company, certifications, inventory, shipping promises, or maintenance guidance as real.
 - Avoid repeated claims, unexplained acronyms, and paragraphs that mix business copy with test evidence.
-
