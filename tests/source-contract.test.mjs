@@ -44,7 +44,8 @@ test('catalog product images stay on the configured commerce origin and have an 
     readFile(new URL('../gateway/src/index.ts', import.meta.url), 'utf8'),
     readFile(new URL('../blocks/aviation-catalog/aviation-catalog.js', import.meta.url), 'utf8'),
   ]);
-  assert.match(gateway, /return candidate\.origin === commerceOrigin \? candidate\.href : null/);
+  assert.match(gateway, /if \(!rawImageUrl \|\| rawImageUrl === '\/'\) return null/);
+  assert.match(gateway, /candidate\.origin === commerceOrigin && candidate\.pathname !== '\/'/);
   assert.match(gateway, /imageUrl: String/);
   assert.match(catalog, /function safeImageUrl\(value, commerceOrigin\)/);
   assert.match(catalog, /candidate\.origin === base\.origin \? candidate\.href : ''/);

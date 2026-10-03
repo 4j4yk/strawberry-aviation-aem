@@ -83,9 +83,11 @@ function normalizedProduct(value: unknown, commerceOrigin: string): CatalogProdu
     availability: record.availability === 'in_stock' ? 'IN_STOCK' : 'OUT_OF_STOCK',
     url,
     imageUrl: (() => {
+      const rawImageUrl = String(record.image_url || '').trim();
+      if (!rawImageUrl || rawImageUrl === '/') return null;
       try {
-        const candidate = new URL(String(record.image_url || ''), commerceOrigin);
-        return candidate.origin === commerceOrigin ? candidate.href : null;
+        const candidate = new URL(rawImageUrl, commerceOrigin);
+        return candidate.origin === commerceOrigin && candidate.pathname !== '/' ? candidate.href : null;
       } catch { return null; }
     })(),
   };
